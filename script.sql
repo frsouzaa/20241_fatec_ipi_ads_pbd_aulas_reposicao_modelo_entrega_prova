@@ -15,7 +15,6 @@ CREATE TABLE student (
 -- ----------------------------------------------------------------
 -- 2 Resultado em função da formação dos pais
 --escreva a sua solução aqui
--- 2
 DO $$
 DECLARE
 	cur_aprovados_phd REFCURSOR;
@@ -30,9 +29,7 @@ BEGIN
 			i := i + 1;
 		END IF;
 	END LOOP;
-	
 	CLOSE cur_aprovados_phd;
-	
 	RAISE NOTICE '%', i;
 END;
 $$
@@ -40,7 +37,33 @@ $$
 -- ----------------------------------------------------------------
 -- 3 Resultado em função dos estudos
 --escreva a sua solução aqui
-
+DO $$
+DECLARE
+	cur_aprovados_estudos REFCURSOR;
+	student RECORD;
+	i int := 0;
+	number_prep_study int := 1;
+	number_grade int := 0;
+BEGIN
+	OPEN cur_aprovados_estudos FOR EXECUTE
+	FORMAT(
+	'SELECT prep_study, grade FROM student
+	WHERE prep_study = $1
+	AND grade > $2'
+	) USING number_prep_study, number_grade;
+	LOOP
+		FETCH cur_aprovados_estudos into student;
+		EXIT WHEN NOT FOUND;
+		i := i + 1;
+	END LOOP;
+	CLOSE cur_aprovados_estudos;
+	IF i = 0 THEN
+		RAISE NOTICE '-1';
+	ELSE
+		RAISE NOTICE '%', i;
+	END IF;
+END;
+$$
 
 -- ----------------------------------------------------------------
 -- 4 Salário versus estudos
