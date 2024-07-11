@@ -15,7 +15,27 @@ CREATE TABLE student (
 -- ----------------------------------------------------------------
 -- 2 Resultado em função da formação dos pais
 --escreva a sua solução aqui
-
+-- 2
+DO $$
+DECLARE
+	cur_aprovados_phd REFCURSOR;
+	student RECORD;
+	i int := 0;
+BEGIN
+	OPEN cur_aprovados_phd FOR SELECT grade, father_edu, mother_edu FROM student;
+	LOOP
+		FETCH cur_aprovados_phd into student;
+		EXIT WHEN NOT FOUND;
+		IF student.grade > 0 AND (student.father_edu = 6 OR student.mother_edu = 6) THEN
+			i := i + 1;
+		END IF;
+	END LOOP;
+	
+	CLOSE cur_aprovados_phd;
+	
+	RAISE NOTICE '%', i;
+END;
+$$
 
 -- ----------------------------------------------------------------
 -- 3 Resultado em função dos estudos
