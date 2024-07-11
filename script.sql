@@ -68,7 +68,25 @@ $$
 -- ----------------------------------------------------------------
 -- 4 Salário versus estudos
 --escreva a sua solução aqui
-
+DO $$
+DECLARE
+	cur_salario_estudos CURSOR FOR
+		SELECT prep_exam, salary FROM student;
+	student RECORD;
+	i int := 0;
+BEGIN
+	OPEN cur_salario_estudos;
+	LOOP
+		FETCH cur_salario_estudos into student;
+		EXIT WHEN NOT FOUND;
+		IF student.salary = 5 AND student.prep_exam = 0 THEN
+			i := i + 1;
+		END IF;
+	END LOOP;
+	CLOSE cur_salario_estudos;
+	RAISE NOTICE '%', i;
+END;
+$$
 
 -- ----------------------------------------------------------------
 -- 5. Limpeza de valores NULL
