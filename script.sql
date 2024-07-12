@@ -91,5 +91,33 @@ $$
 -- ----------------------------------------------------------------
 -- 5. Limpeza de valores NULL
 --escreva a sua solução aqui
+DO $$
+DECLARE
+	cur_limpeza_null REFCURSOR;
+	student RECORD;
+BEGIN
+	OPEN cur_limpeza_null FOR SELECT * FROM student;
+	LOOP
+		FETCH cur_limpeza_null into student;
+		EXIT WHEN NOT FOUND;
+		IF student.salary IS NULL OR
+			student.mother_edu IS NULL OR
+			student.father_edu IS NULL OR 
+			student.prep_study IS NULL OR 
+			student.prep_exam IS NULL OR 
+			student.grade IS NULL THEN
+			RAISE NOTICE 'removendo o registo: %', student;
+			DELETE FROM student WHERE CURRENT OF cur_limpeza_null;
+			CONTINUE;
+		END IF;
+	END LOOP;
+	LOOP
+		FETCH BACKWARD FROM cur_limpeza_null into student;
+		EXIT WHEN NOT FOUND;
+		RAISE NOTICE 'registro mantido: %', student;
+	END LOOP;
+	CLOSE cur_limpeza_null;
+END;
+$$
 
 -- ----------------------------------------------------------------
